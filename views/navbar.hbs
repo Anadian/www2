@@ -1,0 +1,10 @@
+<div id="navigation-menu" class="pure-menu pure-menu-horizontal">
+		<a href="/" class="pure-menu-heading pure-menu-link">Site:</a>
+{{#navbar}}
+		<ul id="navbar-entries" class="pure-menu-list">
+			{{#entries}}
+			<li id="navbar-{{name}}" class="pure-menu-item"><a href="{{url}}" class="pure-menu-link">{{name}}</a></li>
+			{{/entries}}
+		</ul>
+{{/navbar}}
+</div>
