@@ -2,7 +2,7 @@
 var filesystem = require('fs');
 var express = require('express');
 var handlebars = require('handlebars');
-var jquery = require('jquery');
+//var jquery = require('jquery');
 var application = express();
 
 const Site = {
@@ -30,7 +30,9 @@ for(var file_number = 0; file_number < files.length; file_number++){
 function TemplateLookup(name){
 	console.log("%s: %s", arguments.callee.name, name);
 	var _return = [0,name];
-	for(var i; i < Templates.length; i++){
+	//console.log(Templates);
+	for(var i = 0; i < Templates.length; i++){
+		//console.log(Templates[i].name);
 		if(Templates[i].name == name) _return = [1,Templates[i].template];
 	}
 	console.log("%s returned: ", arguments.callee.name, _return);
@@ -54,23 +56,6 @@ function Header(name, description, keywords, mobile, css, js){
 		var header = template(context);
 		_return = [1,header];
 	}
-	else _return = [0,result];
-	console.log("%s returned: ", arguments.callee.name, _return);
-	return _return;
-}
-function Topbar(navigation, user){
-	console.log("%s: ", arguments.callee.name, navigation, user);
-	var _return = [];
-	var template_result = TemplateLookup('topbar.hbs');
-	if(template_result[0] == 1){
-		template = result[1];
-		var context = {
-			navbar: navigation,
-			account: user
-		};
-		var topbar = template(context);
-		_return = [1,topbar];
-	}
 	else _return = [0,template_result];
 	console.log("%s returned: ", arguments.callee.name, _return);
 	return _return;
@@ -78,15 +63,24 @@ function Topbar(navigation, user){
 function Footer(){
 	console.log("%s: ", arguments.callee.name);
 	var _return = [];
-	var template_result = 
-function Welcome(title, message){
-	console.log("%s: %s %s", arguments.callee.name, title, message);
+	var template_result = TemplateLookup('footer.hbs');
+	if(template_result[0] == 1){
+		var template = template_result[1];
+		var footer = template();
+		_return = [1,footer];
+	}
+	else _return = [0,template_result];
+	console.log("%s returned: ", arguments.callee.name, _return);
+	return _return;
+}
+function Welcome(person){
+	console.log("%s: %s", arguments.callee.name, person);
 	var _return = [];
 	var template_result = TemplateLookup('welcome.hbs');
 	if(template_result[0] == 1){
 		var template = template_result[1];
 		var context = {
-			title: title
+			name: person
 		};
 		var welcome = template(context);
 		_return = [1,welcome];
@@ -95,16 +89,42 @@ function Welcome(title, message){
 	console.log("%s returned: ", arguments.callee.name, _return);
 	return _return;
 }
-function Page(header, topbar, body, footer){
-	
-
-application.get('/welcome/:name', function WelcomePage(request, response){
-	Page(Header(), Topbar()
-
-application.get('/', function(request,response){
-	console.log(Templates, request);
-	
-	response.send('Hello World');
-});
+function Page(header, body, footer){
+	console.log("%s: %s %s %s", arguments.callee.name, header, body, footer);
+	var _return = [];
+	var template_result = TemplateLookup('page.hbs');
+	if(template_result[0] == 1){
+		var template = template_result[1];
+		var context = {
+			header: header,
+			body: body,
+			footer: footer
+		};
+		var page = template(context);
+		_return = [1,page];
+	}
+	else _return = [0,template_result];
+	console.log("%s returned: ", arguments.callee.name, _return);
+	return _return;
+}
+function WelcomePage(request, response){
+	console.log(request);
+	var header = Header('Welcome Page', 'The welcome page.', 'hello', true, true, true);
+	if(request.params.name != null) var name = request.params.name;
+	else var name = 'there';
+	var welcome = Welcome(name);
+	var footer = Footer();
+	if((header[0] == 1) && (welcome[0] == 1) && (footer[0] == 1)){
+		page = Page(header[1], welcome[1], footer[1]);
+		if(page[0] == 1){
+			response.send(page[1]);
+		}
+		else response.send(page);
+	}
+	else response.send('Internal error');
+	console.log(response);
+}
+application.get('/welcome/:name?', WelcomePage);
+application.get('/', WelcomePage);
 //console.log('Starting server: ', app);
 application.listen(8000);
