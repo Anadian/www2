@@ -1,19 +1,29 @@
 #!/usr/local/bin/node
-var filesystem = require('fs');
-var express = require('express');
-var handlebars = require('handlebars');
+var FileSystem = require('fs');
+var Express = require('express');
+var HandleBars = require('handlebars');
+var PouchDB = require('pouchdb');
 //var jquery = require('jquery');
-var application = express();
+
+var Primitives = require('function_primitives.js');
+
+var ExpressApplication = Express();
 
 const Site = {
 	name: 'Cool',
 	description: 'Bro',
 	keywords: 'site',
 	icon: null,
-};	
+};
+//database
+PouchDB.debug.enable("*");
+var DocumentDB = new PouchDB('databases/a');
+console.log(DataBase.info().then(function(info){console.log(info);}));
+var Database = require('database.js');
+
 //console.log(handlebars);
 var Templates = [];
-var files = filesystem.readdirSync('./views');
+var files = FileSystem.readdirSync('./views');
 console.log(files);
 for(var file_number = 0; file_number < files.length; file_number++){
 	var Template = {
@@ -21,9 +31,9 @@ for(var file_number = 0; file_number < files.length; file_number++){
 		template: null
 	};
 	console.log("number: %d name: %s template: %s", file_number, files[file_number], Template.name);
-	var data = filesystem.readFileSync('./views/'+files[file_number])
+	var data = FileSystem.readFileSync('./views/'+files[file_number])
 	console.log(data);
-	Template.template = handlebars.compile(data.toString());
+	Template.template = HandleBars.compile(data.toString());
 	console.log(Template);
 	Templates.push(Template);
 }
@@ -107,8 +117,18 @@ function Page(header, body, footer){
 	console.log("%s returned: ", arguments.callee.name, _return);
 	return _return;
 }
+
+function TestPage(request, response){
+	console.log("%s: ", arguments.callee.name, request);
+	var testdocument = {
+		_id: "test_doc",
+		value: math.random()
+	};
+	var PutDocument_return = Database.PutDocument(DataBase, testdocument);
+	console.log("%s response: ", arguments.callee.name, PutDocument_return, response);
+}
 function WelcomePage(request, response){
-	console.log(request);
+	console.log("%s: ", arguments.callee.name, request);
 	var header = Header('Welcome Page', 'The welcome page.', 'hello', true, true, true);
 	if(request.params.name != null) var name = request.params.name;
 	else var name = 'there';
@@ -122,9 +142,14 @@ function WelcomePage(request, response){
 		else response.send(page);
 	}
 	else response.send('Internal error');
-	console.log(response);
+	console.log("%s response: ", arguments.callee.name, response);
 }
-application.get('/welcome/:name?', WelcomePage);
-application.get('/', WelcomePage);
+ExpressApplication.get('/documents', Documents);
+ExpressApplication.get('/document/:document_id', DocumentGet);
+ExpressApplication.get('/document/write', DocumentWrite);
+ExpressApplication.post('/document/post', DocumentPost);
+ExpressApplication.get('/test', TestPage);
+ExpressApplication.get('/welcome/:name?', WelcomePage);
+ExpressApplication.get('/', WelcomePage);
 //console.log('Starting server: ', app);
-application.listen(8000);
+ExpressApplication.listen(8000);
