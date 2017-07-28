@@ -5,7 +5,7 @@ var HandleBars = require('handlebars');
 var PouchDB = require('pouchdb');
 //var jquery = require('jquery');
 
-var Primitives = require('function_primitives.js');
+var Primitives = require('./function_primitives.js');
 
 var ExpressApplication = Express();
 
@@ -18,12 +18,12 @@ const Site = {
 //database
 PouchDB.debug.enable("*");
 var DocumentDB = new PouchDB('databases/a');
-console.log(DataBase.info().then(function(info){console.log(info);}));
-var Database = require('database.js');
+//console.log(DataBase.info().then(function(info){console.log(info);}));
+var Database = require('./database.js');
 
 //console.log(handlebars);
 var Templates = [];
-var files = FileSystem.readdirSync('./views');
+var files = FileSystem.readdirSync('./site/views');
 console.log(files);
 for(var file_number = 0; file_number < files.length; file_number++){
 	var Template = {
@@ -31,7 +31,7 @@ for(var file_number = 0; file_number < files.length; file_number++){
 		template: null
 	};
 	console.log("number: %d name: %s template: %s", file_number, files[file_number], Template.name);
-	var data = FileSystem.readFileSync('./views/'+files[file_number])
+	var data = FileSystem.readFileSync('./site/views/'+files[file_number])
 	console.log(data);
 	Template.template = HandleBars.compile(data.toString());
 	console.log(Template);
@@ -47,6 +47,15 @@ function TemplateLookup(name){
 	}
 	console.log("%s returned: ", arguments.callee.name, _return);
 	return _return;
+}
+function StandardParams(request){
+	if(request.params.nomobile == 1) var mobile = false;
+	else var mobile = true;
+	if(request.params.nocss == 1) var css = false;
+	else var css = true;
+	if(request.params.nojs == 1) var js = false;
+	else var js = true;
+	return [mobile,css,js];
 }
 function Header(name, description, keywords, mobile, css, js){
 	console.log("%s: %s %s %s %d %d %d", arguments.callee.name, name, description, keywords, mobile, css, js);
@@ -129,7 +138,9 @@ function TestPage(request, response){
 }
 function WelcomePage(request, response){
 	console.log("%s: ", arguments.callee.name, request);
-	var header = Header('Welcome Page', 'The welcome page.', 'hello', true, true, true);
+	var standard_params_result = StandardParams(request);
+	console.log(stanadard_params_result);
+	var header = Header('Welcome Page', 'The welcome page.', 'hello', standard_params_result[0], standard_params_result[1], standard_params_result[2]);
 	if(request.params.name != null) var name = request.params.name;
 	else var name = 'there';
 	var welcome = Welcome(name);
@@ -145,10 +156,10 @@ function WelcomePage(request, response){
 	console.log("%s response: ", arguments.callee.name, response);
 }
 ExpressApplication.get('/documents', Documents);
-ExpressApplication.get('/document/:document_id', DocumentGet);
-ExpressApplication.get('/document/write', DocumentWrite);
-ExpressApplication.post('/document/post', DocumentPost);
-ExpressApplication.get('/test', TestPage);
+//ExpressApplication.get('/document/:document_id', DocumentGet);
+//ExpressApplication.get('/document/write', DocumentWrite);
+//ExpressApplication.post('/document/post', DocumentPost);
+//ExpressApplication.get('/test', TestPage);
 ExpressApplication.get('/welcome/:name?', WelcomePage);
 ExpressApplication.get('/', WelcomePage);
 //console.log('Starting server: ', app);
