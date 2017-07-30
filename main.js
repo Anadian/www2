@@ -21,6 +21,8 @@ var DocumentDB = new PouchDB('databases/a');
 //console.log(DataBase.info().then(function(info){console.log(info);}));
 var Database = require('./database.js');
 
+var Documents = require('./document.js');
+
 //console.log(handlebars);
 var Templates = [];
 var files = FileSystem.readdirSync('./site/views');
@@ -48,15 +50,8 @@ function TemplateLookup(name){
 	console.log("%s returned: ", arguments.callee.name, _return);
 	return _return;
 }
-function StandardParams(request){
-	if(request.params.nomobile == 1) var mobile = false;
-	else var mobile = true;
-	if(request.params.nocss == 1) var css = false;
-	else var css = true;
-	if(request.params.nojs == 1) var js = false;
-	else var js = true;
-	return [mobile,css,js];
-}
+var StandardParams = require('./standardparams.js');
+
 function Header(name, description, keywords, mobile, css, js){
 	console.log("%s: %s %s %s %d %d %d", arguments.callee.name, name, description, keywords, mobile, css, js);
 	var _return = [];
@@ -139,7 +134,7 @@ function TestPage(request, response){
 function WelcomePage(request, response){
 	console.log("%s: ", arguments.callee.name, request);
 	var standard_params_result = StandardParams(request);
-	console.log(stanadard_params_result);
+	console.log(standard_params_result);
 	var header = Header('Welcome Page', 'The welcome page.', 'hello', standard_params_result[0], standard_params_result[1], standard_params_result[2]);
 	if(request.params.name != null) var name = request.params.name;
 	else var name = 'there';
@@ -155,7 +150,7 @@ function WelcomePage(request, response){
 	else response.send('Internal error');
 	console.log("%s response: ", arguments.callee.name, response);
 }
-ExpressApplication.get('/documents', Documents);
+ExpressApplication.get('/documents', Documents.AllDocuments);
 //ExpressApplication.get('/document/:document_id', DocumentGet);
 //ExpressApplication.get('/document/write', DocumentWrite);
 //ExpressApplication.post('/document/post', DocumentPost);
