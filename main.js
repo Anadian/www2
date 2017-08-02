@@ -5,7 +5,7 @@ var HandleBars = require('handlebars');
 var PouchDB = require('pouchdb');
 //var jquery = require('jquery');
 
-var Primitives = require('./function_primitives.js');
+var Standard = require('./standard_functions.js');
 
 var ExpressApplication = Express();
 
@@ -16,12 +16,9 @@ const Site = {
 	icon: null,
 };
 //database
-PouchDB.debug.enable("*");
-var DocumentDB = new PouchDB('databases/a');
-//console.log(DataBase.info().then(function(info){console.log(info);}));
 var Database = require('./database.js');
 
-var Documents = require('./document.js');
+var Document_Routs = require('./document.js');
 
 //console.log(handlebars);
 var Templates = [];
@@ -50,7 +47,6 @@ function TemplateLookup(name){
 	console.log("%s returned: ", arguments.callee.name, _return);
 	return _return;
 }
-var StandardParams = require('./standardparams.js');
 
 function Header(name, description, keywords, mobile, css, js){
 	console.log("%s: %s %s %s %d %d %d", arguments.callee.name, name, description, keywords, mobile, css, js);
@@ -151,8 +147,8 @@ function WelcomePage(request, response){
 	console.log("%s response: ", arguments.callee.name, response);
 }
 ExpressApplication.get('/documents', Documents.AllDocuments);
-//ExpressApplication.get('/document/:document_id', DocumentGet);
-//ExpressApplication.get('/document/write', DocumentWrite);
+//ExpressApplication.get('/document/view/:document_id', DocumentGet);
+//ExpressApplication.get('/document/edit/:document_id', DocumentWrite);
 //ExpressApplication.post('/document/post', DocumentPost);
 //ExpressApplication.get('/test', TestPage);
 ExpressApplication.get('/welcome/:name?', WelcomePage);
