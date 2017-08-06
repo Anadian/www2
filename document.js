@@ -15,7 +15,7 @@ exports.All = function AllDocuments(request, response){
 		var header = Header('Documents', 'Listing all documents.', 'list view documents database index', standard_params_result[0], standard_params_result[1], standard_params_result[2]);
 		
 	} else{
-		
+	}
 	var all_docs = Database.GetAllDocuments(DocumentDB);
 	console.log(all_docs);
 	console.log("%s returned: ", arguments.callee.name, _return);

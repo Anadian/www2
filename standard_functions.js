@@ -36,3 +36,11 @@ exports.json = function Standard_Params_JSON(request){
 	console.log("%s returned: ", arguments.callee.name, _return);
 	return _return;
 }
+exports.debug = function Standard_Params_Debug(request){
+	console.log("%s: ", arguments.callee.name, request);
+	var _return = false;
+	if(request.params.debug == 1) _return = true;
+	else _return = false;
+	console.log("%s returned: ", arguments.callee.name, _return);
+	return _return;
+}
