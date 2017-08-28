@@ -1,20 +1,13 @@
 #!/usr/local/bin/node
 //template.js
-var FileSystem = require('fs');
-var HandleBars = require('handlebars');
+const FileSystem = require('fs');
+const HandleBars = require('handlebars');
 
-var SiteInfo = {};
+var Standard = require('./standard_functions.js');
+var Site = require('./site.js');
+
 var Templates = [];
-exports.SetSiteInfo = function Template_Site_Info_Set(name, description, keywords, icon){
-	console.log("%s: ". arguments.callee.name, name, description, keywords, icon);
-	var _return = [0,null];
-	SiteInfo = {
-		name: name,
-		description: description,
-		keywords: keywords,
-		icon: null
-	};
-	_return = [1,SiteInfo];
+console.log("Templates: ", Templates);
 
 exports.LoadDirectory = function Template_Load_Directory(directory){
 	console.log("%s: ", arguments.callee.name, directory);
@@ -51,14 +44,14 @@ exports.Lookup = function Template_Lookup(name){
 exports.Header = function Template_Header(name, description, keywords, mobile, css, js){
 	console.log("%s: %s %s %s %d %d %d", arguments.callee.name, name, description, keywords, mobile, css, js);
 	var _return = [];
-	var template_result = TemplateLookup('header.hbs');
+	var template_result = Template_Lookup('header.hbs');
 	if(template_result[0] == 1){
 		var template = template_result[1];
 		var context = {
 			title: name,
 			description: description,
 			keywords: keywords,
-			site: Site,
+			site: Site.Info,
 			mobile: mobile,
 			css: css,
 			js: js
@@ -73,11 +66,29 @@ exports.Header = function Template_Header(name, description, keywords, mobile, c
 exports.Footer = function Template_Footer(){
 	console.log("%s: ", arguments.callee.name);
 	var _return = [];
-	var template_result = TemplateLookup('footer.hbs');
+	var template_result = Template_Lookup('footer.hbs');
 	if(template_result[0] == 1){
 		var template = template_result[1];
 		var footer = template();
 		_return = [1,footer];
+	}
+	else _return = [0,template_result];
+	console.log("%s returned: ", arguments.callee.name, _return);
+	return _return;
+}
+exports.Page = function Template_Page(header, body, footer){
+	console.log("%s: ", arguments.callee.name, header, body, footer);
+	var _return = [0,null];
+	var template_result = Template_Lookup('page.hbs');
+	if(template_result[0] == 1){
+		var template_function = template_result[1];
+		var context = {
+			header: header,
+			body: body,
+			footer: footer
+		};
+		var page = template_function(context);
+		_return = [1,page];
 	}
 	else _return = [0,template_result];
 	console.log("%s returned: ", arguments.callee.name, _return);

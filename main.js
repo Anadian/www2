@@ -1,19 +1,14 @@
 #!/usr/local/bin/node
 var Express = require('express');
-//var jquery = require('jquery');
 
 var Standard = require('./standard_functions.js');
+var Site = require('./site.js');
 var Database = require('./database.js');
 var Template = require('./template.js');
 
 var ExpressApplication = Express();
 
-const Site = {
-	name: 'Cool',
-	description: 'Bro',
-	keywords: 'site',
-	icon: null,
-};
+Template.LoadDirectory('./site/views');
 
 var Document_Routs = require('./document.js');
 
@@ -28,24 +23,6 @@ function Welcome(person){
 		};
 		var welcome = template(context);
 		_return = [1,welcome];
-	}
-	else _return = [0,template_result];
-	console.log("%s returned: ", arguments.callee.name, _return);
-	return _return;
-}
-function Page(header, body, footer){
-	console.log("%s: %s %s %s", arguments.callee.name, header, body, footer);
-	var _return = [];
-	var template_result = TemplateLookup('page.hbs');
-	if(template_result[0] == 1){
-		var template = template_result[1];
-		var context = {
-			header: header,
-			body: body,
-			footer: footer
-		};
-		var page = template(context);
-		_return = [1,page];
 	}
 	else _return = [0,template_result];
 	console.log("%s returned: ", arguments.callee.name, _return);
@@ -80,8 +57,8 @@ function WelcomePage(request, response){
 	else response.send('Internal error');
 	console.log("%s response: ", arguments.callee.name, response);
 }
-ExpressApplication.get('/documents', Document_Routs.AllDocuments);
-//ExpressApplication.get('/document/view/:document_id', DocumentGet);
+ExpressApplication.get('/documents', Document_Routs.All);
+ExpressApplication.get('/document/view/:document_id', Document_Routs.View);
 //ExpressApplication.get('/document/edit/:document_id', DocumentWrite);
 //ExpressApplication.post('/document/post', DocumentPost);
 //ExpressApplication.get('/test', TestPage);

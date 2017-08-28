@@ -1,0 +1,8 @@
+{{!--document/all.hbs--}}
+<div id="document-all" class="pure-menu">
+	<ul id="document-all-list" class="pure-menu-list">
+{{#rows}}
+		<li class="pure-menu-item"><a class="pure-menu-link" href="/document/view/{{& id}}">{{& id}}</a></li>
+{{/rows}}
+	</ul>
+</div>

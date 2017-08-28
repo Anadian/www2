@@ -16,8 +16,16 @@ exports.failure = function Standard_Promise_Failure(error){
 //standardparams.js
 exports.params = function Standard_Params_Header(request){
 	console.log("%s: ", arguments.callee.name, request);
-	var _return = [true,true,true];
-	var mobile, css, js;
+	var _return = null;
+	var options = {
+		format: 'html', //'text', 'html', 'json', 'markdown'
+		header: true,
+		mobile: true,
+		css: true,
+		js: true,
+		debug: true, 
+		minimal: false
+	};
 	if(request.params.nomobile == 1) mobile = false;
 	else mobile = true;
 	if(request.params.nocss == 1) css = false;

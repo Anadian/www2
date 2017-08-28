@@ -20,6 +20,12 @@ exports.Close = async function Database_Close(database){
 		_return = [1,null];
 	} catch(error){
 		console.log("Error: ", error);
+		var error = {
+			residing_file: module.filename,
+			residing_function: arguments,
+			time: Date.now(),
+			error: error
+		};
 		_return = [0,error];
 	}
 	console.log("%s returned: ", arguments.callee.name, _return);
