@@ -174,7 +174,7 @@
 		{"buldstring": null, "runtime": null, "result": null, "user": null}
 	]
 }
-MasterPackage subcommands:
+/*MasterPackage subcommands:
 h, help
 v, verbose
 n, noop
@@ -192,3 +192,7 @@ install: install interpreter
 uninstall: uninstall interpreter
 list: list (un)installed interpreter
 config: list config variables and their current settings
+
+//cross com
+//usetting
+//udocu*/
