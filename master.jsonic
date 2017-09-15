@@ -100,11 +100,12 @@
 				"winston": "*",
 				"grant": "*",
 				"grant-express": "*",
-				"pm2": "*",
 				"inquirer": "*",
+				"chalk": "*"
 				
 			},
 			"devDependencies": {
+				"pm2": "*",
 				"pkg": "^4.2.4"
 			},
 			"optionalDependencies": {
