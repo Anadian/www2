@@ -37,33 +37,31 @@ var LogFile{
 	level: 'debug'
 };
 
-function ConsoleFormatter(level_name, module_name, function_name, message){
-	var _return = null;
-	var colour;
-	switch(level_name){
-		case 'error': colour = Chalk.red; break;
-		case 'warn': colour = Chalk.yellow; break;
-		case 'note': colour = Chalk.magenta; break;
-		case 'info': colour = Chalk.blue; break;
-		case 'debug': colour = Chalk.green; break;
-		default: colour = function no_colour(){ return arguments; }; break;
-	}
-	_return = colour(util.format("%s:%s:%s %s", Chalk.bold(level_name), Chalk.dim(module_name), Chalk.underline(function_name), message));
-	return _return;
-}
-function FileFormatter(process_name, module_name, file_name, function_name, level_name, message){
-	var _return = null;
-	var date = new Date();
-	_return = util.format("%s %s:%s:%s:%s:%s %s", date.toISOString(), process_name, module_name, file_name, function_name, level_name, message);
-	return _return;
-}
 exports.log = function Log(process_name, module_name, file_name, function_name, level_name, message){
 	var _return = null;
 	var date = new Date();
-	var string = date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': ';
-	if(arguments.length >= 6){
-		var array = [];
+	if(arguments.length > 6){
 		for(var i = 6; i < arguments.length; i++){
-			array.push(Utility.inspect(arguments[i]));
+			message += ('|'+Utility.inspect(arguments[i]));
 		}
+	}
+	date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+messsage;
+	if(LogFile.enabled == true){
+		FileSystem.appendFile(LogFile.filename, date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+messsage+'\n', 'utf8', function appendFile_Callback(error){ console.error('AppendFile error: ', error)});
+	}
+	if(LogConsole.enabled == true){
+		var colour;
+		switch(level_name){
+			case 'error': colour = Chalk.red; break;
+			case 'warn': colour = Chalk.yellow; break;
+			case 'note': colour = Chalk.magenta; break;
+			case 'info': colour = Chalk.blue; break;
+			case 'debug': colour = Chalk.green; break;
+			default: colour = function no_colour(){ return arguments; }; break;
+		}
+		var string = colour(Utility.format("%s:%s:%s: %s", Chalk.bold(level_name), Chalk.dim(module_name), Chalk.underline(function_name), message));
+		console.error(string);
+	}
+	return _return;
+}
 		
