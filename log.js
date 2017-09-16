@@ -25,19 +25,19 @@ const FileSystem = require('fs');
 const Chalk = require('chalk');
 
 var date = new Date();
-var LogConsole{
+var LogConsole = {
 	enabled: true,
 	stream: 'stderr',
 	colour: true,
 	level: 'info'
-}
-var LogFile{
+};
+var LogFile = {
 	enabled: true,
 	filename: date.toISOString().replace(/[-:\.]/g, '')+'.log',
 	level: 'debug'
 };
 
-exports.log = function Log(process_name, module_name, file_name, function_name, level_name, message){
+function Log(process_name, module_name, file_name, function_name, level_name, message){
 	var _return = null;
 	var date = new Date();
 	if(arguments.length > 6){
@@ -45,9 +45,9 @@ exports.log = function Log(process_name, module_name, file_name, function_name, 
 			message += ('|'+Utility.inspect(arguments[i]));
 		}
 	}
-	date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+messsage;
+	date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message;
 	if(LogFile.enabled == true){
-		FileSystem.appendFile(LogFile.filename, date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+messsage+'\n', 'utf8', function appendFile_Callback(error){ console.error('AppendFile error: ', error)});
+		FileSystem.appendFile(LogFile.filename, date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message+'\n', 'utf8', function appendFile_Callback(error){ console.error('AppendFile error: ', error)});
 	}
 	if(LogConsole.enabled == true){
 		var colour;
@@ -64,4 +64,10 @@ exports.log = function Log(process_name, module_name, file_name, function_name, 
 	}
 	return _return;
 }
+
+Log(process.argv0, 'test', __filename, arguments.callee.name, 'error', 'yo', LogConsole, LogFile);
+Log(process.argv0, 'test', __filename, arguments.callee.name, 'warn', 'yo', LogConsole, LogFile);
+Log(process.argv0, 'test', __filename, arguments.callee.name, 'note', 'yo', LogConsole, LogFile);
+Log(process.argv0, 'test', __filename, arguments.callee.name, 'info', 'yo', LogConsole, LogFile);
+Log(process.argv0, 'test', __filename, arguments.callee.name, 'debug', 'yo', LogConsole, LogFile);
 		
