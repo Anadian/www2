@@ -37,6 +37,10 @@ var LogFile = {
 	level: 'debug'
 };
 
+function appendFile_Callback(error){ 
+	if(error != null) console.error('AppendFile error: ', error);
+}
+
 function Log(process_name, module_name, file_name, function_name, level_name, message){
 	var _return = null;
 	var date = new Date();
@@ -47,16 +51,20 @@ function Log(process_name, module_name, file_name, function_name, level_name, me
 	}
 	date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message;
 	if(LogFile.enabled == true){
-		FileSystem.appendFile(LogFile.filename, date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message+'\n', 'utf8', function appendFile_Callback(error){ console.error('AppendFile error: ', error)});
+		FileSystem.appendFile(LogFile.filename, date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message+'\n', 'utf8', function appendFile_Callback(error){ if(error != null) console.error('AppendFile error: ', error);});
 	}
 	if(LogConsole.enabled == true){
 		var colour;
 		switch(level_name){
+			//silent
 			case 'error': colour = Chalk.red; break;
+			//quiet
 			case 'warn': colour = Chalk.yellow; break;
 			case 'note': colour = Chalk.magenta; break;
 			case 'info': colour = Chalk.blue; break;
+			//normal
 			case 'debug': colour = Chalk.green; break;
+			//verbose
 			default: colour = function no_colour(){ return arguments; }; break;
 		}
 		var string = colour(Utility.format("%s:%s:%s: %s", Chalk.bold(level_name), Chalk.dim(module_name), Chalk.underline(function_name), message));
@@ -64,10 +72,18 @@ function Log(process_name, module_name, file_name, function_name, level_name, me
 	}
 	return _return;
 }
+function Log_Test(){
+	Log(process.argv0, 'test', __filename, arguments.callee.name, 'error', 'yo', LogConsole, LogFile);
+	Log(process.argv0, 'test', __filename, arguments.callee.name, 'warn', 'yo', LogConsole, LogFile);
+	Log(process.argv0, 'test', __filename, arguments.callee.name, 'note', 'yo', LogConsole, LogFile);
+	Log(process.argv0, 'test', __filename, arguments.callee.name, 'info', 'yo', LogConsole, LogFile);
+	Log(process.argv0, 'test', __filename, arguments.callee.name, 'debug', 'yo', LogConsole, LogFile);
+}
 
-Log(process.argv0, 'test', __filename, arguments.callee.name, 'error', 'yo', LogConsole, LogFile);
-Log(process.argv0, 'test', __filename, arguments.callee.name, 'warn', 'yo', LogConsole, LogFile);
-Log(process.argv0, 'test', __filename, arguments.callee.name, 'note', 'yo', LogConsole, LogFile);
-Log(process.argv0, 'test', __filename, arguments.callee.name, 'info', 'yo', LogConsole, LogFile);
-Log(process.argv0, 'test', __filename, arguments.callee.name, 'debug', 'yo', LogConsole, LogFile);
-		
+if(require.main === module){
+	Log_Test();
+} else{
+	exports.log = Log;
+	exports.test = Log_Test;
+}
+
