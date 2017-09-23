@@ -25,6 +25,7 @@
 	"main": "source/main.js",
 	"meta": {
 		"readme": "README.md",
+		"notice": "NOTICE",
 		"makefile": "Makefile",
 		"changes": "CHANGES",
 		"gitignore": ".gitignore",
