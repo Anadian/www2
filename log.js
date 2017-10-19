@@ -36,6 +36,10 @@ var LogFile = {
 	filename: date.toISOString().replace(/[-:\.]/g, '')+'.log',
 	level: 'debug'
 };
+var Transports = [
+	{enabled: true, type: 'file', name: 'newest.log', colour: false, level: 'debug'},
+	{enabled: true, type: 'stream', name: 'stderr', colour: true, level: 'info'}
+];
 
 function appendFile_Callback(error){ 
 	if(error != null) console.error('AppendFile error: ', error);
