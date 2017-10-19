@@ -25,17 +25,7 @@ const FileSystem = require('fs');
 const Chalk = require('chalk');
 
 var date = new Date();
-var LogConsole = {
-	enabled: true,
-	stream: 'stderr',
-	colour: true,
-	level: 'info'
-};
-var LogFile = {
-	enabled: true,
-	filename: date.toISOString().replace(/[-:\.]/g, '')+'.log',
-	level: 'debug'
-};
+
 var Transports = [
 	{enabled: true, type: 'file', name: 'newest.log', colour: false, level: 'debug'},
 	{enabled: true, type: 'stream', name: 'stderr', colour: true, level: 'info'}

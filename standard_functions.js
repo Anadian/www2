@@ -16,8 +16,8 @@ exports.failure = function Standard_Promise_Failure(error){
 	return error;
 }
 //standardparams.js
-exports.params = function Standard_Params_Header(request){
-	console.log("%s: ", arguments.callee.name, request);
+exports.params = function Standard_Params(request){
+	console.log("Standard_Params: ", request);
 	var _return = null;
 	var options = {
 		format: 'html', //'text', 'html', 'json', 'markdown', 'raw'
@@ -36,22 +36,6 @@ exports.params = function Standard_Params_Header(request){
 	if(request.params.nojs == 1) js = false;
 	else js = true;
 	_return = [mobile,css,js];
-	console.log("%s returned: ", arguments.callee.name, _return);
-	return _return;
-}
-exports.json = function Standard_Params_JSON(request){
-	console.log("%s: ", arguments.callee.name, request);
-	var _return = false;
-	if(request.params.json == 1) _return = true;
-	else _return = false;
-	console.log("%s returned: ", arguments.callee.name, _return);
-	return _return;
-}
-exports.debug = function Standard_Params_Debug(request){
-	console.log("%s: ", arguments.callee.name, request);
-	var _return = false;
-	if(request.params.debug == 1) _return = true;
-	else _return = false;
 	console.log("%s returned: ", arguments.callee.name, _return);
 	return _return;
 }
