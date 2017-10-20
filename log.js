@@ -25,9 +25,16 @@ const FileSystem = require('fs');
 const Chalk = require('chalk');
 
 var date = new Date();
+const LogLevelsMap = new Map([
+	['error',1],
+	['warn',2],
+	['note',3],
+	['info',4],
+	['debug',5]
+]);
 
 var Transports = [
-	{enabled: true, type: 'file', name: 'newest.log', colour: false, level: 'debug'},
+	{enabled: true, type: 'file', name: date.toISOString().replace(/[-+:.]/g,''), colour: false, level: 'debug'},
 	{enabled: true, type: 'stream', name: 'stderr', colour: true, level: 'info'}
 ];
 
@@ -44,6 +51,20 @@ function Log(process_name, module_name, file_name, function_name, level_name, me
 		}
 	}
 	date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message;
+	for(var i = 0; i < Transports.length; i++){
+		if(Transports[i].enabled === true){
+			if(Transports[i].type === 'file'){
+				if(Transports[i].name != null){
+					var transport_level = LogLevelsMap.get(Transports[i].level);
+					var message_level = LogLevelsMap.get(level_name);
+					if(message_level <= transport_level){
+						FileSystem.appendFile(Transports[i].name, date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message+'\n', 'utf8', appendFile_Callback);
+					}
+				} else{
+					console.error('Log error: Transports[%d].name is not specified: ', i, Transports[i].name);
+				}
+			} else if(Transports[i].type === 'stream'){
+				
 	if(LogFile.enabled == true){
 		FileSystem.appendFile(LogFile.filename, date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message+'\n', 'utf8', function appendFile_Callback(error){ if(error != null) console.error('AppendFile error: ', error);});
 	}
