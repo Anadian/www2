@@ -34,7 +34,7 @@ const LogLevelsMap = new Map([
 ]);
 
 var Transports = [
-	{enabled: true, type: 'file', name: date.toISOString().replace(/[-+:.]/g,''), colour: false, level: 'debug'},
+	{enabled: true, type: 'file', name: date.toISOString().replace(/[-+:.]/g,'')+'.log', colour: false, level: 'debug'},
 	{enabled: true, type: 'stream', name: 'stderr', colour: true, level: 'info'}
 ];
 
@@ -53,18 +53,50 @@ function Log(process_name, module_name, file_name, function_name, level_name, me
 	date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message;
 	for(var i = 0; i < Transports.length; i++){
 		if(Transports[i].enabled === true){
-			if(Transports[i].type === 'file'){
-				if(Transports[i].name != null){
-					var transport_level = LogLevelsMap.get(Transports[i].level);
-					var message_level = LogLevelsMap.get(level_name);
-					if(message_level <= transport_level){
-						FileSystem.appendFile(Transports[i].name, date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message+'\n', 'utf8', appendFile_Callback);
+			var transport_level = LogLevelsMap.get(Transports[i].level);
+			var message_level = LogLevelsMap.get(level_name);
+			if(message_level <= transport_level){
+				if(Transports[i].type === 'file'){
+					if(Transports[i].name != null){
+							FileSystem.appendFile(Transports[i].name, date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message+'\n', 'utf8', appendFile_Callback);
+					} else{
+						error_message = Utility.format('Log error: Transports[%d].name is not specified: ', i, Transports[i].name);
+						console.error(error_message);
+						_return = [0, error_message];
+					}
+				} else if(Transports[i].type === 'stream'){
+					var string = '';
+					if(Transports[i].colour === true){
+						var colour;
+						switch(level_name){
+							//silent
+							case 'error': colour = Chalk.red; break;
+							//quiet
+							case 'warn': colour = Chalk.yellow; break;
+							case 'note': colour = Chalk.magenta; break;
+							case 'info': colour = Chalk.blue; break;
+							//normal
+							case 'debug': colour = Chalk.green; break;
+							//verbose
+							default: colour = function no_colour(){ return arguments; }; break;
+						}
+						string = colour(Utility.format("%s:%s:%s: %s", Chalk.bold(level_name), Chalk.dim(module_name), Chalk.underline(function_name), message));
+					} else{
+						string = Utility.format("%s:%s:%s: %s", level_name, module_name, function_name, message);
+					}
+					if(Transports[i].name === 'stdout'){
+						console.log(string);
+					} else if(Transports[i].name === 'stderr'){
+						console.error(string);
+					} else{
+						console.error('Log error: Unknown stream for Transports[%d]: %s', i, Transports[i].name);
 					}
 				} else{
-					console.error('Log error: Transports[%d].name is not specified: ', i, Transports[i].name);
-				}
-			} else if(Transports[i].type === 'stream'){
-				
+					console.error('Log error: Invalid transport type for Transports[%d]: '. i, Transports.type);
+				}	
+			}
+		}
+	}
 	if(LogFile.enabled == true){
 		FileSystem.appendFile(LogFile.filename, date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message+'\n', 'utf8', function appendFile_Callback(error){ if(error != null) console.error('AppendFile error: ', error);});
 	}
