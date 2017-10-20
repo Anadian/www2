@@ -1,0 +1,5 @@
+2017-10-20T16:34:53.476Z /usr/local/bin/node:test:/Users/cameron/dev/www2/log.js:Log_Test:info: yo
+2017-10-20T16:34:53.476Z /usr/local/bin/node:test:/Users/cameron/dev/www2/log.js:Log_Test:debug: yo
+2017-10-20T16:34:53.464Z /usr/local/bin/node:test:/Users/cameron/dev/www2/log.js:Log_Test:error: yo
+2017-10-20T16:34:53.475Z /usr/local/bin/node:test:/Users/cameron/dev/www2/log.js:Log_Test:warn: yo
+2017-10-20T16:34:53.476Z /usr/local/bin/node:test:/Users/cameron/dev/www2/log.js:Log_Test:note: yo

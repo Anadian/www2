@@ -22,6 +22,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 const Utility = require('util');
 const FileSystem = require('fs');
+const Path = require('path');
 const Chalk = require('chalk');
 
 var date = new Date();
