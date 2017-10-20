@@ -51,7 +51,6 @@ function Log(process_name, module_name, file_name, function_name, level_name, me
 			message += ('|'+Utility.inspect(arguments[i]));
 		}
 	}
-	date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message;
 	for(var i = 0; i < Transports.length; i++){
 		if(Transports[i].enabled === true){
 			var transport_level = LogLevelsMap.get(Transports[i].level);
@@ -111,11 +110,11 @@ function Log(process_name, module_name, file_name, function_name, level_name, me
 	return _return;
 }
 function Log_Test(){
-	Log(process.argv0, 'test', __filename, arguments.callee.name, 'error', 'yo', LogConsole, LogFile);
-	Log(process.argv0, 'test', __filename, arguments.callee.name, 'warn', 'yo', LogConsole, LogFile);
-	Log(process.argv0, 'test', __filename, arguments.callee.name, 'note', 'yo', LogConsole, LogFile);
-	Log(process.argv0, 'test', __filename, arguments.callee.name, 'info', 'yo', LogConsole, LogFile);
-	Log(process.argv0, 'test', __filename, arguments.callee.name, 'debug', 'yo', LogConsole, LogFile);
+	Log(process.argv0, 'test', __filename, arguments.callee.name, 'error', 'yo');
+	Log(process.argv0, 'test', __filename, arguments.callee.name, 'warn', 'yo');
+	Log(process.argv0, 'test', __filename, arguments.callee.name, 'note', 'yo');
+	Log(process.argv0, 'test', __filename, arguments.callee.name, 'info', 'yo');
+	Log(process.argv0, 'test', __filename, arguments.callee.name, 'debug', 'yo');
 }
 
 if(require.main === module){
