@@ -43,7 +43,8 @@ function appendFile_Callback(error){
 }
 
 function Log(process_name, module_name, file_name, function_name, level_name, message){
-	var _return = null;
+	var _return = [0,null];
+	var error_message = null;
 	var date = new Date();
 	if(arguments.length > 6){
 		for(var i = 6; i < arguments.length; i++){
@@ -58,11 +59,13 @@ function Log(process_name, module_name, file_name, function_name, level_name, me
 			if(message_level <= transport_level){
 				if(Transports[i].type === 'file'){
 					if(Transports[i].name != null){
-							FileSystem.appendFile(Transports[i].name, date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message+'\n', 'utf8', appendFile_Callback);
+						FileSystem.appendFile(Transports[i].name, date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message+'\n', 'utf8', appendFile_Callback);
+						_return[0] = 1;
 					} else{
 						error_message = Utility.format('Log error: Transports[%d].name is not specified: ', i, Transports[i].name);
 						console.error(error_message);
-						_return = [0, error_message];
+						_return[0] = 0;
+						_return[1] += error_message;
 					}
 				} else if(Transports[i].type === 'stream'){
 					var string = '';
@@ -86,36 +89,24 @@ function Log(process_name, module_name, file_name, function_name, level_name, me
 					}
 					if(Transports[i].name === 'stdout'){
 						console.log(string);
+						_return[0] = 1;
 					} else if(Transports[i].name === 'stderr'){
 						console.error(string);
+						_return[0] = 1;
 					} else{
-						console.error('Log error: Unknown stream for Transports[%d]: %s', i, Transports[i].name);
+						error_message = Utility.format('Log error: Unknown stream for Transports[%d]: %s', i, Transports[i].name);
+						console.error(error_message);
+						_return[0] = 0;
+						_return[1] += error_message;
 					}
 				} else{
-					console.error('Log error: Invalid transport type for Transports[%d]: '. i, Transports.type);
+					error_message = Utility.format('Log error: Invalid transport type for Transports[%d]: '. i, Transports.type);
+					console.error(error_message);
+					_return[0] = 0;
+					_return[1] += error_message;
 				}	
 			}
 		}
-	}
-	if(LogFile.enabled == true){
-		FileSystem.appendFile(LogFile.filename, date.toISOString()+' '+process_name+':'+module_name+':'+file_name+':'+function_name+':'+level_name+': '+message+'\n', 'utf8', function appendFile_Callback(error){ if(error != null) console.error('AppendFile error: ', error);});
-	}
-	if(LogConsole.enabled == true){
-		var colour;
-		switch(level_name){
-			//silent
-			case 'error': colour = Chalk.red; break;
-			//quiet
-			case 'warn': colour = Chalk.yellow; break;
-			case 'note': colour = Chalk.magenta; break;
-			case 'info': colour = Chalk.blue; break;
-			//normal
-			case 'debug': colour = Chalk.green; break;
-			//verbose
-			default: colour = function no_colour(){ return arguments; }; break;
-		}
-		var string = colour(Utility.format("%s:%s:%s: %s", Chalk.bold(level_name), Chalk.dim(module_name), Chalk.underline(function_name), message));
-		console.error(string);
 	}
 	return _return;
 }
