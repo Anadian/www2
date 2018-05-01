@@ -27,7 +27,13 @@ exports.params = function Standard_Params(request){
 		js: true,
 		footer: true,
 		debug: false,
-		minimal: false
+		minimal: false,
+		theme: 'light', //dark, et cetera
+		images: 'full', //small, none
+		videos: 'embedded', //external, none
+		content: 'inclusive', //exclusive (only show the main content; no comments, or similar suggestions)
+		safe: true, //warn when leaving site or loading content from other sites.
+		restricted: 0, //0 only show 'Family' content; 1, include 'mild discretion'; 2, include 'significant discretion'; 3, include 'restricted' content 
 	};
 	if(request.params.nomobile == 1) mobile = false;
 	else mobile = true;
